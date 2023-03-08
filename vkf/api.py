@@ -1,5 +1,8 @@
 import httpx
 
+from vkf.models import Friend
+
+
 BASE_API = "https://api.vk.com/method/"
 
 
@@ -24,4 +27,12 @@ def get_friends(access_token, user_id: int):
     json = response.json()
 
     for item in json["response"]["items"]:
-        print(item)
+        friend = Friend(
+            first_name=item["first_name"],
+            last_name=item["last_name"],
+            country=item.get("country", {}).get("title"),
+            city=item.get("city", {}).get("title"),
+            bdate=item.get("bdate"),
+            sex=item.get("sex"),
+        )
+        yield friend

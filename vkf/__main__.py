@@ -14,7 +14,9 @@ def load_friends(
     format: str = "csv",
     output: str = "",
 ):
-    vkf.api.get_friends(access_token, user_id)
+    friends = list(vkf.api.get_friends(access_token, user_id))
+    for friend in friends:
+        print(friend)
 
 
 def _main():
