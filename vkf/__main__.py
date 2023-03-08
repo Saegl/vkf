@@ -1,8 +1,10 @@
 import fire
 
+import vkf.auth
 
-def hello(name: str):
-    print(f"Hello, {name}")
+
+def auth():
+    vkf.auth.web_auth()
 
 
 def _main():
