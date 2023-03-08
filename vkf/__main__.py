@@ -1,10 +1,20 @@
 import fire
 
 import vkf.auth
+import vkf.api
 
 
 def auth():
     vkf.auth.web_auth()
+
+
+def load_friends(
+    access_token: str,
+    user_id: int,
+    format: str = "csv",
+    output: str = "",
+):
+    vkf.api.get_friends(access_token, user_id)
 
 
 def _main():
