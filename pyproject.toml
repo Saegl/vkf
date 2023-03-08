@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 fire = "^0.5.0"
+pydantic = "^1.10.5"
 
 [tool.poetry.scripts]
 vkf = "vkf.__main__:_main"
