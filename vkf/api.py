@@ -1,4 +1,3 @@
-import sys
 import httpx
 
 from vkf.models import Friend
@@ -25,7 +24,6 @@ def vk_method(method_name, params, access_token: str) -> dict:
 def check_error(response: dict):
     if "error" in response:
         if response["error"]["error_code"] == 5:
-            sys.tracebacklimit = 0
             raise AccessTokenExpired("Access token expired, get new with `vkf auth`")
 
 
