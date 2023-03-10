@@ -2,6 +2,12 @@ import fire
 
 import vkf.auth
 import vkf.api
+from vkf.serializers.json import JsonSerializer
+
+
+serializers = {
+    "json": JsonSerializer(),
+}
 
 
 def auth():
@@ -14,9 +20,11 @@ def load_friends(
     format: str = "csv",
     output: str = "",
 ):
-    friends = list(vkf.api.get_friends(access_token, user_id))
-    for friend in friends:
-        print(friend)
+    friends = vkf.api.get_friends(access_token, user_id)
+    serializer = serializers[format]
+
+    with open("report." + format, "w", encoding="utf8") as f:
+        serializer.save(friends, f)
 
 
 def _main():
