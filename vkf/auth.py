@@ -1,4 +1,3 @@
-import os
 import http.server
 import pathlib
 import socketserver
@@ -7,9 +6,7 @@ import webbrowser
 import pydantic
 
 
-filepath = pathlib.Path(__file__).parent
-VK_API_ID = os.environ.get("VK_API_ID")  # also known as client_id
-REDIRECT_URI = "http://127.0.0.1:3434"
+FILEPATH = pathlib.Path(__file__).parent
 
 
 class AuthResponse(pydantic.BaseModel):
@@ -39,7 +36,7 @@ class GetTokenServer(http.server.BaseHTTPRequestHandler):
             )
             self.wfile.write("<script>\n".encode())
 
-            with open(filepath / "auth.js", mode="rb") as f:
+            with open(FILEPATH / "auth.js", mode="rb") as f:
                 self.wfile.write(f.read())
 
             self.wfile.write("</script>\n".encode())
@@ -68,18 +65,19 @@ class GetTokenServer(http.server.BaseHTTPRequestHandler):
             )
 
 
-def web_auth():
+def web_auth(client_id, host="127.0.0.1", port=3434):
+    redirect_uri = f"http://{host}:{port}"
     url = (
         "https://oauth.vk.com/authorize"
-        f"?client_id={VK_API_ID}"
+        f"?client_id={client_id}"
         "&display=page"
-        f"&redirect_uri={REDIRECT_URI}"
+        f"&redirect_uri={redirect_uri}"
         "&scope=friends"
         "&response_type=token"
         "&v=5.131"
     )
 
-    with socketserver.TCPServer(("127.0.0.1", 3434), GetTokenServer) as httpd:
+    with socketserver.TCPServer((host, port), GetTokenServer) as httpd:
         print("Open new tab")
         webbrowser.open_new_tab(url)
         print("Tab opened")

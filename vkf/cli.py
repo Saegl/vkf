@@ -45,12 +45,20 @@ class CliCommands:
         if not trace:
             sys.tracebacklimit = 0
 
-    def auth(self):
+    def auth(
+        self,
+        client_id: str,
+        host: str = "127.0.0.1",
+        port: int = 3434,
+    ):
         """
         Use vk.com implicit flow through default web browser
-        to get access token
+        to get access token.
+        It opens small localhost server to catch returned token.
+        Ensure host is added to vk app developer dashboard (Settings -> Open API),
+        and port is not currently in use
         """
-        vkf.auth.web_auth()
+        vkf.auth.web_auth(client_id, host, port)
 
     def load_friends(
         self,
