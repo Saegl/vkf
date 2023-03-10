@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Don't upload reports
+*.json
+*.csv
+*.tsv
