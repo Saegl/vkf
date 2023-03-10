@@ -15,6 +15,19 @@ serializers: dict[str, Serializer] = {
 }
 
 
+class ArgumentError(Exception):
+    """Exception to represent wrong arguments to cli program"""
+
+
+def get_serializer(format: str):
+    if format not in serializers:
+        raise ArgumentError(
+            f"Format {format} is not supported, "
+            f"supported formats: {list(serializers.keys())}"
+        )
+    return serializers[format]
+
+
 class CliCommands:
     """
     export friends from vk.com
@@ -48,7 +61,7 @@ class CliCommands:
     ):
         """Load friends and save them in report"""
         friends = vkf.api.get_friends(access_token, user_id)
-        serializer = serializers[format]
+        serializer = get_serializer(format)
 
         with open("report." + format, "w", encoding="utf8", newline="") as f:
             serializer.save(friends, f)
