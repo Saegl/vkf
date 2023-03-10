@@ -63,5 +63,7 @@ class CliCommands:
         friends = vkf.api.get_friends(access_token, user_id)
         serializer = get_serializer(format)
 
-        with open("report." + format, "w", encoding="utf8", newline="") as f:
+        filename = output if output else "report." + format
+
+        with open(filename, "w", encoding="utf8", newline="") as f:
             serializer.save(friends, f)
