@@ -1,3 +1,15 @@
+"""
+This modules can load access token through webbrowser
+It uses vk.com implicit flow and opens server on localhost
+to catch token.
+
+Flow:
+1. Open new tab at https://oauth.vk.com/authorize
+2. Get redirect to `localhost/#...` with access token in fragment identifier
+3. Use js to send access token from fragment identfier to `localhost/?...`
+4. Catch access token with localhost server and show it
+"""
+
 import http.server
 import pathlib
 import socketserver
@@ -6,7 +18,7 @@ import webbrowser
 import pydantic
 
 
-FILEPATH = pathlib.Path(__file__).parent
+STATIC_DIR = pathlib.Path(__file__).parent.parent / "static"
 
 
 class AuthResponse(pydantic.BaseModel):
@@ -21,48 +33,36 @@ class ServerClose(KeyboardInterrupt):
 
 class GetTokenServer(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
-        path: str = self.path
+        if self.path == "/":
+            self.vk_redirect_handler()
+        elif self.path.startswith("/?"):
+            self.access_token_handler()
 
+    def vk_redirect_handler(self):
         self.send_response(code=200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
 
-        if path == "/":
-            code = path.split("/?code=")[-1]
-            print("parsed code", code)
+        with open(STATIC_DIR / "vk_redirect.html", mode="rb") as f:
+            self.wfile.write(f.read())
 
-            self.wfile.write(
-                "<h1>Auth complete. You can close this tab</h1>".encode(),
-            )
-            self.wfile.write("<script>\n".encode())
+    def access_token_handler(self):
+        params_string = self.path.split("/?")[-1]
+        params = params_string.split("&")
 
-            with open(FILEPATH / "auth.js", mode="rb") as f:
-                self.wfile.write(f.read())
+        data = {}
+        for param in params:
+            key, value = param.split("=")
+            data[key] = value
 
-            self.wfile.write("</script>\n".encode())
+        auth_data = AuthResponse(**data)
 
-        elif path.startswith("/?"):
-            params_string = path.split("/?")[-1]
-            params = params_string.split("&")
+        print("Access token successfully catched and parsed")
+        print(f"Access token: {auth_data.access_token}")
+        print(f"Expires in: {auth_data.expires_in} seconds")
+        print(f"UserID: {auth_data.user_id}")
 
-            print("Path: ", path)
-            print("Params string: ", params_string)
-            print("Got params:", params)
-
-            data = {}
-            for param in params:
-                print("Param: ", param)
-                key, value = param.split("=")
-                data[key] = value
-
-            auth_data = AuthResponse(**data)
-            print("AUTH data: ", auth_data)
-            raise ServerClose()
-
-        else:
-            self.wfile.write(
-                "<h1>Error when parsing token, try again</h1>".encode(),
-            )
+        raise ServerClose()
 
 
 def web_auth(client_id, host="127.0.0.1", port=3434):
@@ -78,11 +78,8 @@ def web_auth(client_id, host="127.0.0.1", port=3434):
     )
 
     with socketserver.TCPServer((host, port), GetTokenServer) as httpd:
-        print("Open new tab")
         webbrowser.open_new_tab(url)
-        print("Tab opened")
-        print("Start server")
         try:
             httpd.serve_forever()
         except ServerClose:
-            print("complete!")
+            pass
