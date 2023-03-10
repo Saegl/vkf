@@ -3,10 +3,11 @@ import fire
 import vkf.auth
 import vkf.api
 from vkf.serializers.json import JsonSerializer
-
+from vkf.serializers.csv import CsvSerializer
 
 serializers = {
     "json": JsonSerializer(),
+    "csv": CsvSerializer(),
 }
 
 
