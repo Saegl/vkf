@@ -20,7 +20,7 @@ import pydantic
 from vkf.api import VK_API_VERSION
 
 
-STATIC_DIR = pathlib.Path(__file__).parent.parent / "static"
+STATIC_DIR = pathlib.Path(__file__).parent / "static"
 
 
 class AuthResponse(pydantic.BaseModel):

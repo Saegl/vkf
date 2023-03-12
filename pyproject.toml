@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Saegl <saegl@protonmail.com>"]
 readme = "README.md"
+include = ["vkf/static/vk_redirect.html"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
