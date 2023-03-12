@@ -38,6 +38,7 @@ def get_friends(access_token, user_id: int):
         "friends.get",
         {
             "user_id": user_id,
+            "order": "name",
             "fields": "bdate,nickname,country,city,sex",
         },
         access_token,
