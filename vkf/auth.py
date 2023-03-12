@@ -17,6 +17,8 @@ import webbrowser
 
 import pydantic
 
+from vkf.api import VK_API_VERSION
+
 
 STATIC_DIR = pathlib.Path(__file__).parent.parent / "static"
 
@@ -74,7 +76,7 @@ def web_auth(client_id, host="127.0.0.1", port=3434):
         f"&redirect_uri={redirect_uri}"
         "&scope=friends"
         "&response_type=token"
-        "&v=5.131"
+        f"&v={VK_API_VERSION}"
     )
 
     with socketserver.TCPServer((host, port), GetTokenServer) as httpd:

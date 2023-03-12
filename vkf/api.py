@@ -6,7 +6,8 @@ import httpx
 from vkf.models import Friend
 
 
-BASE_API = "https://api.vk.com/method/"
+VK_API_BASE_URL = "https://api.vk.com/method/"
+VK_API_VERSION = "5.131"
 
 
 class VKapiError(Exception):
@@ -26,9 +27,9 @@ def vk_method(method_name, params, access_token: str) -> dict:
         AccessTokenExpired: user have to get new access token
     """
     response = httpx.post(
-        BASE_API + method_name,
+        VK_API_BASE_URL + method_name,
         headers={"Authorization": f"Bearer {access_token}"},
-        params={"v": "5.131"} | params,
+        params={"v": VK_API_VERSION} | params,
     ).json()
 
     check_error(response)
