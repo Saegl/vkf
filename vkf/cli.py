@@ -1,3 +1,7 @@
+"""
+Command line interface app
+Module contains CliCommands class for `fire` lib
+"""
 import sys
 
 import vkf.auth

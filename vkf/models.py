@@ -1,3 +1,7 @@
+"""
+Validated models received from vk api
+Used as input to serializers
+"""
 from pydantic import BaseModel
 
 

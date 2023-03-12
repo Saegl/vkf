@@ -1,3 +1,6 @@
+"""
+Useful wrappers around api.vk.com/method
+"""
 import httpx
 
 from vkf.models import Friend
@@ -7,7 +10,7 @@ BASE_API = "https://api.vk.com/method/"
 
 
 class VKapiError(Exception):
-    pass
+    """Exception to represent errors received from vk api"""
 
 
 class AccessTokenExpired(VKapiError):
@@ -15,6 +18,13 @@ class AccessTokenExpired(VKapiError):
 
 
 def vk_method(method_name, params, access_token: str) -> dict:
+    """
+    Request to vk methods listed on https://dev.vk.com/method
+
+    Raises:
+        VKapiError: error received from vk api
+        AccessTokenExpired: user have to get new access token
+    """
     response = httpx.post(
         BASE_API + method_name,
         headers={"Authorization": f"Bearer {access_token}"},
@@ -26,6 +36,7 @@ def vk_method(method_name, params, access_token: str) -> dict:
 
 
 def check_error(response: dict):
+    """Check api response for errors"""
     if "error" in response:
         if response["error"]["error_code"] == 5:
             raise AccessTokenExpired("Access token expired, get new with `vkf auth`")
@@ -34,6 +45,10 @@ def check_error(response: dict):
 
 
 def get_friends(access_token, user_id: int):
+    """
+    Load friends sorted by name
+    https://dev.vk.com/method/friends.get
+    """
     response = vk_method(
         "friends.get",
         {

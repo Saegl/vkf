@@ -1,3 +1,6 @@
+"""
+Entry point for `vkf` cli program
+"""
 import fire
 from vkf.cli import CliCommands
 
