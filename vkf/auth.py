@@ -34,6 +34,18 @@ class ServerClose(KeyboardInterrupt):
     pass
 
 
+def parse_auth_response(path: str) -> AuthResponse:
+    params_string = path.split("/?")[-1]
+    params = params_string.split("&")
+
+    data = {}
+    for param in params:
+        key, value = param.split("=")
+        data[key] = value
+
+    return AuthResponse(**data)
+
+
 class GetTokenServer(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/":
@@ -50,16 +62,8 @@ class GetTokenServer(http.server.BaseHTTPRequestHandler):
             self.wfile.write(f.read())
 
     def access_token_handler(self):
-        params_string = self.path.split("/?")[-1]
-        params = params_string.split("&")
-
-        data = {}
-        for param in params:
-            key, value = param.split("=")
-            data[key] = value
-
         try:
-            auth_data = AuthResponse(**data)
+            auth_data = parse_auth_response(self.path)
         except pydantic.ValidationError:
             print("Cannot parse access token, did you accept vk oauth?")
             logger.critical("Access token is not parsed")
