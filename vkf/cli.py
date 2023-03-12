@@ -79,3 +79,5 @@ class CliCommands:
 
         with open(filename, "w", encoding="utf8", newline="") as f:
             serializer.save(friends, f)
+
+        print(f"Report is saved as {filename}")
