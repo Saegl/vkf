@@ -4,6 +4,7 @@ Useful wrappers around api.vk.com/method
 import httpx
 
 from vkf.models import Friend
+from vkf.config import logger
 
 
 VK_API_BASE_URL = "https://api.vk.com/method/"
@@ -39,6 +40,7 @@ def vk_method(method_name, params, access_token: str) -> dict:
 def check_error(response: dict):
     """Check api response for errors"""
     if "error" in response:
+        logger.debug(f"Error returned from vk api: {response['error']}")
         if response["error"]["error_code"] == 5:
             raise AccessTokenExpired("Access token expired, get new with `vkf auth`")
         else:

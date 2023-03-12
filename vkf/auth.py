@@ -18,6 +18,7 @@ import webbrowser
 import pydantic
 
 from vkf.api import VK_API_VERSION
+from vkf.config import logger
 
 
 STATIC_DIR = pathlib.Path(__file__).parent / "static"
@@ -57,12 +58,17 @@ class GetTokenServer(http.server.BaseHTTPRequestHandler):
             key, value = param.split("=")
             data[key] = value
 
-        auth_data = AuthResponse(**data)
+        try:
+            auth_data = AuthResponse(**data)
+        except pydantic.ValidationError:
+            print("Cannot parse access token, did you accept vk oauth?")
+            logger.critical("Access token is not parsed")
 
         print("Access token successfully catched and parsed")
         print(f"Access token: {auth_data.access_token}")
         print(f"Expires in: {auth_data.expires_in} seconds")
         print(f"UserID: {auth_data.user_id}")
+        logger.info("Access token successfully catched and parsed")
 
         raise ServerClose()
 
@@ -80,8 +86,12 @@ def web_auth(client_id, host="127.0.0.1", port=3434):
     )
 
     with socketserver.TCPServer((host, port), GetTokenServer) as httpd:
+        logger.info(f"Acquire host and port successfully {(host, port)}")
+
         webbrowser.open_new_tab(url)
+        logger.info("Open new browser tab")
         try:
+            logger.info("Start serving token catcher at localhost")
             httpd.serve_forever()
         except ServerClose:
-            pass
+            logger.info("Server closed")

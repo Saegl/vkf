@@ -11,6 +11,8 @@ from vkf.serializers.json import JsonSerializer
 from vkf.serializers.csv import CsvSerializer
 from vkf.serializers.tsv import TsvSerializer
 
+from vkf.config import logger
+
 
 serializers: dict[str, Serializer] = {
     "json": JsonSerializer(),
@@ -25,10 +27,12 @@ class ArgumentError(Exception):
 
 def get_serializer(format: str):
     if format not in serializers:
+        logger.critical(f"Unsupported format is chosen by user, format: {format}")
         raise ArgumentError(
             f"Format {format} is not supported, "
             f"supported formats: {list(serializers.keys())}"
         )
+    logger.info(f"Chosen format {format}")
     return serializers[format]
 
 
@@ -47,7 +51,10 @@ class CliCommands:
         """
         self.trace = trace
         if not trace:
+            logger.info("Stacktrace is disabled")
             sys.tracebacklimit = 0
+        else:
+            logger.info("Stacktrace is enabled")
 
     def auth(
         self,
