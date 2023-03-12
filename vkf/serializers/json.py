@@ -8,6 +8,6 @@ from vkf.models import Friend
 
 
 class JsonSerializer(Serializer):
-    def save(self, friends: Iterator[Friend], f: TextIOWrapper):
+    def save(self, friends: Iterator[Friend], f: TextIOWrapper) -> None:
         data = [friend.dict() for friend in friends]
         json.dump(data, f, ensure_ascii=False)

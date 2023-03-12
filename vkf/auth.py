@@ -43,17 +43,20 @@ def parse_auth_response(path: str) -> AuthResponse:
         key, value = param.split("=")
         data[key] = value
 
-    return AuthResponse(**data)
+    # You don't need to manually convert str to int
+    # pydantic will do it itself
+    # that is why `# type: ignore` is here
+    return AuthResponse(**data)  # type: ignore
 
 
 class GetTokenServer(http.server.BaseHTTPRequestHandler):
-    def do_GET(self):
+    def do_GET(self) -> None:
         if self.path == "/":
             self.vk_redirect_handler()
         elif self.path.startswith("/?"):
             self.access_token_handler()
 
-    def vk_redirect_handler(self):
+    def vk_redirect_handler(self) -> None:
         self.send_response(code=200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
@@ -61,7 +64,7 @@ class GetTokenServer(http.server.BaseHTTPRequestHandler):
         with open(STATIC_DIR / "vk_redirect.html", mode="rb") as f:
             self.wfile.write(f.read())
 
-    def access_token_handler(self):
+    def access_token_handler(self) -> None:
         try:
             auth_data = parse_auth_response(self.path)
         except pydantic.ValidationError:
@@ -77,7 +80,7 @@ class GetTokenServer(http.server.BaseHTTPRequestHandler):
         raise ServerClose()
 
 
-def web_auth(client_id, host="127.0.0.1", port=3434):
+def web_auth(client_id: int, host: str = "127.0.0.1", port: int = 3434) -> None:
     redirect_uri = f"http://{host}:{port}"
     url = (
         "https://oauth.vk.com/authorize"

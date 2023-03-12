@@ -6,7 +6,7 @@ from vkf.models import Friend
 
 
 class CsvSerializer(Serializer):
-    def save(self, friends: Iterator[Friend], f: TextIOWrapper):
+    def save(self, friends: Iterator[Friend], f: TextIOWrapper) -> None:
         fieldnames = list(Friend.schema()["properties"].keys())
 
         writer = csv.DictWriter(f, fieldnames=fieldnames)

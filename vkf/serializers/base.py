@@ -15,5 +15,5 @@ class Serializer(abc.ABC):
     Abstract class for friends -> text_file serializer
     """
 
-    def save(self, friends: Iterator[Friend], f: TextIOWrapper):
+    def save(self, friends: Iterator[Friend], f: TextIOWrapper) -> None:
         pass

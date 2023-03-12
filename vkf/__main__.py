@@ -1,11 +1,11 @@
 """
 Entry point for `vkf` cli program
 """
-import fire
+import fire  # type: ignore # no stubs for fire
 from vkf.cli import CliCommands
 
 
-def _main():
+def _main() -> None:
     """
     This function needed to conf `poetry scripts entry point`
     It starts from underscore to prevent showing it in fire cmd

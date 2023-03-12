@@ -25,7 +25,7 @@ class ArgumentError(Exception):
     """Exception to represent wrong arguments to cli program"""
 
 
-def get_serializer(format: str):
+def get_serializer(format: str) -> Serializer:
     if format not in serializers:
         logger.critical(f"Unsupported format is chosen by user, format: {format}")
         raise ArgumentError(
@@ -58,10 +58,10 @@ class CliCommands:
 
     def auth(
         self,
-        client_id: str,
+        client_id: int,
         host: str = "127.0.0.1",
         port: int = 3434,
-    ):
+    ) -> None:
         """
         Use vk.com implicit flow through default web browser
         to get access token.
@@ -77,7 +77,7 @@ class CliCommands:
         user_id: int,
         format: str = "csv",
         output: str = "",
-    ):
+    ) -> None:
         """Load friends and save them in report"""
         friends = vkf.api.get_friends(access_token, user_id)
         serializer = get_serializer(format)
