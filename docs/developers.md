@@ -1,5 +1,27 @@
 # Notes for developers
 
+This project uses [poetry](https://python-poetry.org/)  
+If you install package by using pip, you cannot test it / run linters and formatters  
+So install by using poetry, install poetry itself and then:
+
+```bash
+poetry shell
+poetry install
+```
+
+## Run tests
+
+```bash
+pytest --cov=vkf --cov-report=html
+```
+
+## Run formatter / linters
+
+```bash
+pre-commit run -a # all files
+pre-commit run # staged files
+```
+
 ## Add new output format
 
 0. Create new file in `vkf/serializers/<format>.py`
