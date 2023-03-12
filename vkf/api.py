@@ -6,7 +6,11 @@ from vkf.models import Friend
 BASE_API = "https://api.vk.com/method/"
 
 
-class AccessTokenExpired(Exception):
+class VKapiError(Exception):
+    pass
+
+
+class AccessTokenExpired(VKapiError):
     pass
 
 
@@ -25,6 +29,8 @@ def check_error(response: dict):
     if "error" in response:
         if response["error"]["error_code"] == 5:
             raise AccessTokenExpired("Access token expired, get new with `vkf auth`")
+        else:
+            raise VKapiError(response["error"].get("error_msg"))
 
 
 def get_friends(access_token, user_id: int):
